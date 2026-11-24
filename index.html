@@ -3,38 +3,443 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f1f5f9">
 <title>Random List</title>
 <style>
-body{font-family:sans-serif;max-width:480px;margin:2em auto;padding:0 1em}
-li button{margin-left:.5em}
-input{padding:.3em}
+:root {
+  color-scheme: light;
+  --ink: #29233d;
+  --muted: #716b83;
+  --blue: #315c91;
+  --blue-dark: #24466f;
+  --line: #e8e2f2;
+  --paper: #fff;
+  --wash: #f1f5f9;
+  --lime: #d7f36a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 28px 18px 56px;
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 10% 5%, #dce8f5 0, transparent 34rem),
+    radial-gradient(ellipse at 95% 55%, #fff2d6 0, transparent 25rem),
+    var(--wash);
+  font: 16px/1.5 ui-rounded, "Avenir Next", Avenir, system-ui, sans-serif;
+}
+
+button, input, select { font: inherit; }
+button, select { cursor: pointer; }
+
+.app { width: min(100%, 680px); margin: 0 auto; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 34px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: .9rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+
+.brand-mark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--lime);
+  color: var(--ink);
+  font-size: 19px;
+  transform: rotate(-7deg);
+}
+
+.language-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+select {
+  padding: 8px 30px 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.intro { margin-bottom: 26px; }
+
+.eyebrow {
+  margin: 0 0 7px;
+  color: var(--blue);
+  font-size: .76rem;
+  font-weight: 850;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 8vw, 4rem);
+  line-height: 1;
+  letter-spacing: -.065em;
+}
+
+.intro p:last-child {
+  max-width: 470px;
+  margin: 14px 0 0;
+  color: var(--muted);
+}
+
+.privacy-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 15px;
+  padding: 6px 10px;
+  border: 1px solid #dce5ef;
+  border-radius: 999px;
+  background: #fff9;
+  color: #625a73;
+  font-size: .75rem;
+  font-weight: 650;
+}
+
+.privacy-note::before { content: "✦"; color: var(--blue); }
+
+.card {
+  margin-top: 16px;
+  padding: clamp(20px, 5vw, 28px);
+  border: 1px solid #ffffffc9;
+  border-radius: 24px;
+  background: var(--paper);
+  box-shadow: 0 12px 40px #3c28620d, 0 2px 8px #3c286208;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 18px;
+}
+
+.step {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 11px;
+  background: #e8eff7;
+  color: var(--blue);
+  font-size: .82rem;
+  font-weight: 850;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  letter-spacing: -.025em;
+}
+
+.field-row { display: flex; gap: 9px; }
+
+input[type="text"], #name, #seed {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  outline: none;
+  background: #fdfcff;
+  color: var(--ink);
+  transition: border-color .18s, box-shadow .18s;
+}
+
+input:focus, select:focus-visible {
+  border-color: #7ea3ce;
+  box-shadow: 0 0 0 3px #315c911c;
+}
+
+input::placeholder { color: #a39bad; }
+
+button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 13px;
+  background: var(--ink);
+  color: white;
+  font-weight: 750;
+  transition: transform .18s, background .18s, box-shadow .18s;
+}
+
+button:hover:not(:disabled) { transform: translateY(-2px); }
+button:active:not(:disabled) { transform: translateY(0); }
+button:focus-visible { outline: 3px solid #7ea3ce; outline-offset: 3px; }
+button:disabled { cursor: wait; opacity: .8; }
+
+.add-button { flex: 0 0 auto; background: var(--blue); }
+.add-button:hover:not(:disabled) { background: var(--blue-dark); }
+
+#names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 17px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+#names:empty { display: none; }
+
+#names li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 7px 6px 12px;
+  border: 1px solid #e3eaf2;
+  border-radius: 999px;
+  background: #f7f9fc;
+  font-size: .9rem;
+  animation: pop-in .24s both;
+}
+
+#names li button {
+  display: grid;
+  width: 25px;
+  min-height: 25px;
+  padding: 0;
+  place-items: center;
+  border-radius: 50%;
+  background: #e9eff6;
+  color: #52657c;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+#names li button:hover:not(:disabled) { background: #dce6f1; }
+
+.list-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.text-button {
+  min-height: auto;
+  padding: 5px 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+.text-button:hover:not(:disabled) { background: #f1f5f9; color: var(--ink); }
+
+.option-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #504a60;
+  font-size: .91rem;
+  cursor: pointer;
+}
+
+.option-row input {
+  width: 17px;
+  height: 17px;
+  margin: 3px 0 0;
+  accent-color: var(--blue);
+}
+
+#seed-box { margin-top: 12px; }
+
+.generate-button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 14px 18px;
+  border-radius: 15px;
+  background: var(--blue);
+  box-shadow: 0 7px 15px #315c912b;
+  font-size: 1rem;
+}
+
+.generate-button:hover:not(:disabled) {
+  background: var(--blue-dark);
+  box-shadow: 0 10px 20px #315c913b;
+}
+
+.button-icon { font-size: 1.15rem; }
+
+.shuffle-status {
+  overflow: hidden;
+  max-height: 0;
+  margin: 0;
+  color: var(--muted);
+  text-align: center;
+  font-size: .85rem;
+  opacity: 0;
+  transition: max-height .2s, margin .2s, opacity .2s;
+}
+
+.shuffle-status.visible { max-height: 60px; margin: 14px 0 0; opacity: 1; }
+
+.shuffle-status::after {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin-top: 9px;
+  border-radius: 9px;
+  background: linear-gradient(90deg, var(--lime), #ffbd65, #7ea3ce, var(--lime));
+  background-size: 220% 100%;
+  content: "";
+  animation: loading-sweep .8s linear infinite;
+}
+
+#result {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: result;
+}
+
+#result:not(:empty) { margin-top: 20px; }
+
+#result li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 9px 14px;
+  border: 1px solid #e3eaf2;
+  border-radius: 14px;
+  background: #f9fbfd;
+  font-weight: 700;
+  animation: reveal .42s both;
+  animation-delay: calc(var(--item-index) * 90ms);
+}
+
+#result li::before {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 9px;
+  background: #e8eff7;
+  color: var(--blue);
+  content: counter(result);
+  counter-increment: result;
+  font-size: .8rem;
+  font-weight: 850;
+}
+
+@keyframes loading-sweep { to { background-position: -220% 0; } }
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(.88); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(8px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 480px) {
+  body { padding: 20px 14px 40px; }
+  .topbar { margin-bottom: 28px; }
+  .brand { font-size: .82rem; }
+  .language-control { gap: 5px; font-size: .72rem; }
+  select { padding: 7px 25px 7px 8px; }
+  .card { border-radius: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
 </style>
 </head>
 <body>
-<label for="language" data-i18n="languageLabel">Language</label>
-<select id="language">
-  <option value="en">English</option>
-  <option value="pt-BR">Português (Brasil)</option>
-</select>
+<main class="app">
+  <nav class="topbar" aria-label="Settings">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">↗</span><span data-i18n="brand">Little Randomizer</span></div>
+    <label class="language-control" for="language">
+      <span data-i18n="languageLabel">Language</span>
+      <select id="language">
+        <option value="en">English</option>
+        <option value="pt-BR">Português</option>
+      </select>
+    </label>
+  </nav>
 
-<h1 data-i18n="title">Random List</h1>
-<p data-i18n="privacy">Names and results are stored only in your browser. Nothing is sent anywhere.</p>
+  <header class="intro">
+    <p class="eyebrow" data-i18n="eyebrow">A tiny bit of suspense</p>
+    <h1 data-i18n="title">Who's up next?</h1>
+    <p data-i18n="subtitle">Make a list, leave the decision to chance, and let the fun begin.</p>
+    <span class="privacy-note" data-i18n="privacy">Your names stay right here in your browser.</span>
+  </header>
 
-<h2 data-i18n="namesHeading">Names</h2>
-<form id="add-form">
-  <input id="name" data-i18n-placeholder="namePlaceholder" placeholder="Add a name" required autocomplete="off">
-  <button type="submit" data-i18n="add">Add</button>
-</form>
-<ul id="names"></ul>
-<button id="clear" type="button" data-i18n="clear">Clear all</button>
+  <section class="card" aria-labelledby="names-heading">
+    <div class="section-heading">
+      <span class="step" aria-hidden="true">01</span>
+      <h2 id="names-heading" data-i18n="namesHeading">Add your people</h2>
+    </div>
+    <form id="add-form" class="field-row">
+      <input id="name" data-i18n-placeholder="namePlaceholder" placeholder="Type a name..." required autocomplete="off">
+      <button class="add-button" type="submit" data-i18n="add">Add</button>
+    </form>
+    <ul id="names" aria-label="Names"></ul>
+    <div class="list-footer">
+      <button class="text-button" id="clear" type="button" data-i18n="clear">Clear list</button>
+    </div>
+  </section>
 
-<h2 data-i18n="orderHeading">Order</h2>
-<label><input type="checkbox" id="use-seed"> <span data-i18n="useSeed">Provide a random seed</span></label>
-<div id="seed-box" hidden>
-  <input id="seed" data-i18n-placeholder="seedPlaceholder" placeholder="Seed (any text)">
-</div>
-<p><button id="shuffle" type="button" data-i18n="generate">Generate order</button></p>
-<ol id="result"></ol>
+  <section class="card" aria-labelledby="order-heading">
+    <div class="section-heading">
+      <span class="step" aria-hidden="true">02</span>
+      <h2 id="order-heading" data-i18n="orderHeading">Shuffle the order</h2>
+    </div>
+    <label class="option-row">
+      <input type="checkbox" id="use-seed">
+      <span data-i18n="useSeed">Use a seed to replay the same result</span>
+    </label>
+    <div id="seed-box" hidden>
+      <input id="seed" data-i18n-placeholder="seedPlaceholder" placeholder="Seed (any text)">
+    </div>
+    <button class="generate-button" id="shuffle" type="button">
+      <span class="button-icon" aria-hidden="true">✦</span>
+      <span data-i18n="generate">Shuffle the list</span>
+    </button>
+    <p class="shuffle-status" id="shuffle-status" role="status" aria-live="polite" data-i18n="shuffling">Shuffling... no peeking!</p>
+    <ol id="result" aria-label="Random order" aria-live="polite"></ol>
+  </section>
+</main>
 
 <script>
 (function () {
@@ -42,38 +447,47 @@ input{padding:.3em}
   var LANGUAGE_KEY = "random_list_language";
   var translations = {
     en: {
+      brand: "Little Randomizer",
       languageLabel: "Language",
-      title: "Random List",
-      privacy: "Names and results are stored only in your browser. Nothing is sent anywhere.",
-      namesHeading: "Names",
-      namePlaceholder: "Add a name",
+      eyebrow: "A tiny bit of suspense",
+      title: "Who's up next?",
+      subtitle: "Make a list, leave the decision to chance, and let the fun begin.",
+      privacy: "Your names stay right here in your browser.",
+      namesHeading: "Add your people",
+      namePlaceholder: "Type a name...",
       add: "Add",
       remove: "Remove",
-      clear: "Clear all",
-      orderHeading: "Order",
-      useSeed: "Provide a random seed",
+      clear: "Clear list",
+      orderHeading: "Shuffle the order",
+      useSeed: "Use a seed to replay the same result",
       seedPlaceholder: "Seed (any text)",
-      generate: "Generate order"
+      generate: "Shuffle the list",
+      shuffling: "Shuffling... no peeking!"
     },
     "pt-BR": {
+      brand: "Sorteio de bolso",
       languageLabel: "Idioma",
-      title: "Lista aleatória",
-      privacy: "Os nomes e resultados ficam armazenados apenas no seu navegador. Nada é enviado para lugar algum.",
-      namesHeading: "Nomes",
-      namePlaceholder: "Adicione um nome",
+      eyebrow: "Um tiquinho de suspense",
+      title: "Quem vai primeiro?",
+      subtitle: "Monte a lista, deixe a sorte decidir e que comece a diversão.",
+      privacy: "Seus nomes ficam só no seu navegador.",
+      namesHeading: "Adicione a galera",
+      namePlaceholder: "Digite um nome...",
       add: "Adicionar",
       remove: "Remover",
-      clear: "Limpar tudo",
-      orderHeading: "Ordem",
-      useSeed: "Informar uma semente aleatória",
+      clear: "Limpar lista",
+      orderHeading: "Embaralhe a ordem",
+      useSeed: "Use uma semente para repetir o resultado",
       seedPlaceholder: "Semente (qualquer texto)",
-      generate: "Gerar ordem"
+      generate: "Embaralhar a lista",
+      shuffling: "Misturando... sem espiar!"
     }
   };
   var $ = function (id) { return document.getElementById(id); };
   var names = [];
   var language = "en";
   var savedLanguage = "en";
+  var shuffleTimer;
   try { names = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { names = []; }
   try { savedLanguage = localStorage.getItem(LANGUAGE_KEY) || "en"; } catch (e) { savedLanguage = "en"; }
   if (translations[savedLanguage]) { language = savedLanguage; }
@@ -102,7 +516,8 @@ input{padding:.3em}
       li.appendChild(document.createTextNode(n));
       var b = document.createElement("button");
       b.type = "button";
-      b.textContent = translations[language].remove;
+      b.textContent = "×";
+      b.setAttribute("aria-label", translations[language].remove + " " + n);
       b.onclick = function () { names.splice(i, 1); save(); render(); };
       li.appendChild(b);
       ul.appendChild(li);
@@ -138,13 +553,35 @@ input{padding:.3em}
     return a;
   }
 
+  function finishShuffle(order) {
+    var ol = $("result");
+    ol.textContent = "";
+    order.forEach(function (n, i) {
+      var li = document.createElement("li");
+      li.textContent = n;
+      li.style.setProperty("--item-index", i);
+      ol.appendChild(li);
+    });
+    $("shuffle").disabled = false;
+    $("shuffle-status").classList.remove("visible");
+  }
+
   $("add-form").onsubmit = function (e) {
     e.preventDefault();
     var v = $("name").value.trim();
     if (v) { names.push(v); save(); render(); }
     $("name").value = "";
+    $("name").focus();
   };
-  $("clear").onclick = function () { names = []; save(); render(); $("result").textContent = ""; };
+  $("clear").onclick = function () {
+    clearTimeout(shuffleTimer);
+    names = [];
+    save();
+    render();
+    $("result").textContent = "";
+    $("shuffle").disabled = false;
+    $("shuffle-status").classList.remove("visible");
+  };
   $("use-seed").onchange = function () { $("seed-box").hidden = !this.checked; };
   $("language").onchange = function () {
     language = this.value;
@@ -156,13 +593,10 @@ input{padding:.3em}
     // sort first so the same seed gives the same order regardless of input order
     var base = names.slice().sort();
     var order = shuffle(base, mulberry32(hash(seed)));
-    var ol = $("result");
-    ol.textContent = "";
-    order.forEach(function (n) {
-      var li = document.createElement("li");
-      li.textContent = n;
-      ol.appendChild(li);
-    });
+    $("shuffle").disabled = true;
+    $("shuffle-status").classList.add("visible");
+    $("result").textContent = "";
+    shuffleTimer = setTimeout(function () { finishShuffle(order); }, 1400);
   };
 
   translate();
