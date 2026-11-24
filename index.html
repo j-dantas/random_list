@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f1f5f9">
-<title>Random List</title>
+<title>Quem vai primeiro?</title>
 <style>
 :root {
   color-scheme: light;
@@ -387,57 +387,57 @@ button:disabled { cursor: wait; opacity: .8; }
 </head>
 <body>
 <main class="app">
-  <nav class="topbar" aria-label="Settings">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">↗</span><span data-i18n="brand">Little Randomizer</span></div>
+  <nav class="topbar" aria-label="Configurações" data-i18n-aria-label="settings">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">↗</span><span data-i18n="brand">Sorteio de bolso</span></div>
     <label class="language-control" for="language">
-      <span data-i18n="languageLabel">Language</span>
+      <span data-i18n="languageLabel">Idioma</span>
       <select id="language">
-        <option value="en">English</option>
         <option value="pt-BR">Português</option>
+        <option value="en">English</option>
       </select>
     </label>
   </nav>
 
   <header class="intro">
-    <p class="eyebrow" data-i18n="eyebrow">A tiny bit of suspense</p>
-    <h1 data-i18n="title">Who's up next?</h1>
-    <p data-i18n="subtitle">Make a list, leave the decision to chance, and let the fun begin.</p>
-    <span class="privacy-note" data-i18n="privacy">Your names stay right here in your browser.</span>
+    <p class="eyebrow" data-i18n="eyebrow">Um tiquinho de suspense</p>
+    <h1 data-i18n="title">Quem vai primeiro?</h1>
+    <p data-i18n="subtitle">Monte a lista, deixe a sorte decidir e que comece a diversão.</p>
+    <span class="privacy-note" data-i18n="privacy">Seus nomes ficam só no seu navegador.</span>
   </header>
 
   <section class="card" aria-labelledby="names-heading">
     <div class="section-heading">
       <span class="step" aria-hidden="true">01</span>
-      <h2 id="names-heading" data-i18n="namesHeading">Add your people</h2>
+      <h2 id="names-heading" data-i18n="namesHeading">Adicione a galera</h2>
     </div>
     <form id="add-form" class="field-row">
-      <input id="name" data-i18n-placeholder="namePlaceholder" placeholder="Type a name..." required autocomplete="off">
-      <button class="add-button" type="submit" data-i18n="add">Add</button>
+      <input id="name" data-i18n-placeholder="namePlaceholder" placeholder="Digite um nome..." required autocomplete="off">
+      <button class="add-button" type="submit" data-i18n="add">Adicionar</button>
     </form>
-    <ul id="names" aria-label="Names"></ul>
+    <ul id="names" aria-label="Nomes" data-i18n-aria-label="namesLabel"></ul>
     <div class="list-footer">
-      <button class="text-button" id="clear" type="button" data-i18n="clear">Clear list</button>
+      <button class="text-button" id="clear" type="button" data-i18n="clear">Limpar lista</button>
     </div>
   </section>
 
   <section class="card" aria-labelledby="order-heading">
     <div class="section-heading">
       <span class="step" aria-hidden="true">02</span>
-      <h2 id="order-heading" data-i18n="orderHeading">Shuffle the order</h2>
+      <h2 id="order-heading" data-i18n="orderHeading">Embaralhe a ordem</h2>
     </div>
     <label class="option-row">
       <input type="checkbox" id="use-seed">
-      <span data-i18n="useSeed">Use a seed to replay the same result</span>
+      <span data-i18n="useSeed">Use uma semente para repetir o resultado</span>
     </label>
     <div id="seed-box" hidden>
-      <input id="seed" data-i18n-placeholder="seedPlaceholder" placeholder="Seed (any text)">
+      <input id="seed" data-i18n-placeholder="seedPlaceholder" placeholder="Semente (qualquer texto)">
     </div>
     <button class="generate-button" id="shuffle" type="button">
       <span class="button-icon" aria-hidden="true">✦</span>
-      <span data-i18n="generate">Shuffle the list</span>
+      <span data-i18n="generate">Embaralhar a lista</span>
     </button>
-    <p class="shuffle-status" id="shuffle-status" role="status" aria-live="polite" data-i18n="shuffling">Shuffling... no peeking!</p>
-    <ol id="result" aria-label="Random order" aria-live="polite"></ol>
+    <p class="shuffle-status" id="shuffle-status" role="status" aria-live="polite" data-i18n="shuffling">Misturando... sem espiar!</p>
+    <ol id="result" aria-label="Ordem aleatória" data-i18n-aria-label="resultLabel" aria-live="polite"></ol>
   </section>
 </main>
 
@@ -447,6 +447,9 @@ button:disabled { cursor: wait; opacity: .8; }
   var LANGUAGE_KEY = "random_list_language";
   var translations = {
     en: {
+      settings: "Settings",
+      namesLabel: "Names",
+      resultLabel: "Random order",
       brand: "Little Randomizer",
       languageLabel: "Language",
       eyebrow: "A tiny bit of suspense",
@@ -465,6 +468,9 @@ button:disabled { cursor: wait; opacity: .8; }
       shuffling: "Shuffling... no peeking!"
     },
     "pt-BR": {
+      settings: "Configurações",
+      namesLabel: "Nomes",
+      resultLabel: "Ordem aleatória",
       brand: "Sorteio de bolso",
       languageLabel: "Idioma",
       eyebrow: "Um tiquinho de suspense",
@@ -485,12 +491,12 @@ button:disabled { cursor: wait; opacity: .8; }
   };
   var $ = function (id) { return document.getElementById(id); };
   var names = [];
-  var language = "en";
-  var savedLanguage = "en";
+  var language = "pt-BR";
+  var savedLanguage = "pt-BR";
   var shuffleTimer;
   try { names = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { names = []; }
-  try { savedLanguage = localStorage.getItem(LANGUAGE_KEY) || "en"; } catch (e) { savedLanguage = "en"; }
-  if (translations[savedLanguage]) { language = savedLanguage; }
+  try { savedLanguage = localStorage.getItem(LANGUAGE_KEY) || "pt-BR"; } catch (e) { savedLanguage = "pt-BR"; }
+  if (Object.prototype.hasOwnProperty.call(translations, savedLanguage)) { language = savedLanguage; }
 
   function translate() {
     var strings = translations[language];
@@ -501,6 +507,9 @@ button:disabled { cursor: wait; opacity: .8; }
     });
     document.querySelectorAll("[data-i18n-placeholder]").forEach(function (element) {
       element.placeholder = strings[element.getAttribute("data-i18n-placeholder")];
+    });
+    document.querySelectorAll("[data-i18n-aria-label]").forEach(function (element) {
+      element.setAttribute("aria-label", strings[element.getAttribute("data-i18n-aria-label")]);
     });
     $("language").value = language;
     render();
