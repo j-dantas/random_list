@@ -11,31 +11,86 @@ input{padding:.3em}
 </style>
 </head>
 <body>
-<h1>Random List</h1>
-<p>Names and results are stored only in your browser. Nothing is sent anywhere.</p>
+<label for="language" data-i18n="languageLabel">Language</label>
+<select id="language">
+  <option value="en">English</option>
+  <option value="pt-BR">Português (Brasil)</option>
+</select>
 
-<h2>Names</h2>
+<h1 data-i18n="title">Random List</h1>
+<p data-i18n="privacy">Names and results are stored only in your browser. Nothing is sent anywhere.</p>
+
+<h2 data-i18n="namesHeading">Names</h2>
 <form id="add-form">
-  <input id="name" placeholder="Add a name" required autocomplete="off">
-  <button type="submit">Add</button>
+  <input id="name" data-i18n-placeholder="namePlaceholder" placeholder="Add a name" required autocomplete="off">
+  <button type="submit" data-i18n="add">Add</button>
 </form>
 <ul id="names"></ul>
-<button id="clear" type="button">Clear all</button>
+<button id="clear" type="button" data-i18n="clear">Clear all</button>
 
-<h2>Order</h2>
-<label><input type="checkbox" id="use-seed"> Provide a random seed</label>
+<h2 data-i18n="orderHeading">Order</h2>
+<label><input type="checkbox" id="use-seed"> <span data-i18n="useSeed">Provide a random seed</span></label>
 <div id="seed-box" hidden>
-  <input id="seed" placeholder="Seed (any text)">
+  <input id="seed" data-i18n-placeholder="seedPlaceholder" placeholder="Seed (any text)">
 </div>
-<p><button id="shuffle" type="button">Generate order</button></p>
+<p><button id="shuffle" type="button" data-i18n="generate">Generate order</button></p>
 <ol id="result"></ol>
 
 <script>
 (function () {
   var KEY = "random_list_names";
+  var LANGUAGE_KEY = "random_list_language";
+  var translations = {
+    en: {
+      languageLabel: "Language",
+      title: "Random List",
+      privacy: "Names and results are stored only in your browser. Nothing is sent anywhere.",
+      namesHeading: "Names",
+      namePlaceholder: "Add a name",
+      add: "Add",
+      remove: "Remove",
+      clear: "Clear all",
+      orderHeading: "Order",
+      useSeed: "Provide a random seed",
+      seedPlaceholder: "Seed (any text)",
+      generate: "Generate order"
+    },
+    "pt-BR": {
+      languageLabel: "Idioma",
+      title: "Lista aleatória",
+      privacy: "Os nomes e resultados ficam armazenados apenas no seu navegador. Nada é enviado para lugar algum.",
+      namesHeading: "Nomes",
+      namePlaceholder: "Adicione um nome",
+      add: "Adicionar",
+      remove: "Remover",
+      clear: "Limpar tudo",
+      orderHeading: "Ordem",
+      useSeed: "Informar uma semente aleatória",
+      seedPlaceholder: "Semente (qualquer texto)",
+      generate: "Gerar ordem"
+    }
+  };
   var $ = function (id) { return document.getElementById(id); };
   var names = [];
+  var language = "en";
+  var savedLanguage = "en";
   try { names = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { names = []; }
+  try { savedLanguage = localStorage.getItem(LANGUAGE_KEY) || "en"; } catch (e) { savedLanguage = "en"; }
+  if (translations[savedLanguage]) { language = savedLanguage; }
+
+  function translate() {
+    var strings = translations[language];
+    document.documentElement.lang = language;
+    document.title = strings.title;
+    document.querySelectorAll("[data-i18n]").forEach(function (element) {
+      element.textContent = strings[element.getAttribute("data-i18n")];
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(function (element) {
+      element.placeholder = strings[element.getAttribute("data-i18n-placeholder")];
+    });
+    $("language").value = language;
+    render();
+  }
 
   function save() { localStorage.setItem(KEY, JSON.stringify(names)); }
 
@@ -47,7 +102,7 @@ input{padding:.3em}
       li.appendChild(document.createTextNode(n));
       var b = document.createElement("button");
       b.type = "button";
-      b.textContent = "Remove";
+      b.textContent = translations[language].remove;
       b.onclick = function () { names.splice(i, 1); save(); render(); };
       li.appendChild(b);
       ul.appendChild(li);
@@ -91,6 +146,11 @@ input{padding:.3em}
   };
   $("clear").onclick = function () { names = []; save(); render(); $("result").textContent = ""; };
   $("use-seed").onchange = function () { $("seed-box").hidden = !this.checked; };
+  $("language").onchange = function () {
+    language = this.value;
+    localStorage.setItem(LANGUAGE_KEY, language);
+    translate();
+  };
   $("shuffle").onclick = function () {
     var seed = $("use-seed").checked ? $("seed").value : String(Math.random()) + Date.now();
     // sort first so the same seed gives the same order regardless of input order
@@ -105,7 +165,7 @@ input{padding:.3em}
     });
   };
 
-  render();
+  translate();
 })();
 </script>
 </body>
